@@ -648,7 +648,7 @@ let parse spec =
   with Not_found ->
     { dp_prover = spec ; dp_name = spec ; dp_version = "default" }
 
-let pe_prover = Str.regexp "\\([^ ]+\\) (\\([^)]+\\))"
+let pe_prover = Str.regexp "\\([^ ]+\\) \\([a-zA-Z0-9\\.]+\\)"
 
 class why3detect job =
   object(why)
