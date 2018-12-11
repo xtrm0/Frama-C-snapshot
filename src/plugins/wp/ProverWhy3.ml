@@ -348,9 +348,9 @@ let assemble_goal ~id ~title ~theory ?axioms prop fmt =
     engine#set_goal true ;
     engine#global
       begin fun () ->
-        v#printf "@[<hv 2>goal %s \"expl:%s\":@ %a@]@\n@\n"
+        v#printf "@[<hv 2>goal %s [@expl:%s]:@ %a@]@\n@\n"
           why3_goal_name
-          title
+          (Str.global_replace (Str.regexp "[\n]") "" title)
           engine#pp_prop (F.e_prop prop) ;
       end ;
     engine#set_goal false ;
