@@ -469,7 +469,7 @@ let assemble_goal wpo =
 
 open ProverTask
 
-let p_goal = p_until_space ^ " " ^ p_until_space ^ " " ^ p_until_space ^ " : "
+let p_goal = p_until_space ^ " " ^ p_until_space ^ " " ^ p_until_space ^ ": "
 let p_valid = p_goal ^ "Valid (" ^ p_float ^ "s\\(,[^)]*\\)?)"
 let p_limit = p_goal ^ "Timeout"
 let p_error = "File " ^ p_string ^ ", line " ^ p_int ^ ", characters "
