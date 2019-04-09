@@ -86,7 +86,7 @@ if test "$ENABLE_WP" != "no"; then
     if test "$WHY3COQC" = "yes" ; then
       WHY3VERSION=`why3 --version | sed -n -e 's|.*version *\([[^ ]]*\)$|\1|p' `
       case $WHY3VERSION in
-        0.88*)
+        0.88*|1.0.0|1.1.0|1.2.0)
           AC_MSG_RESULT(why3 version $WHY3VERSION found)
 	  WHY3LIB=`why3 --print-libdir`
 	  if test -f $WHY3LIB/coq/BuiltIn.vo ; then
