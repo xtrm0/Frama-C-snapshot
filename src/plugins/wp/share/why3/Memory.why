@@ -82,14 +82,14 @@ predicate invalid (m:Map.map int int) (p:addr) (n:int) = (Int.(>) (n) (0)) ->
   (Int.(<=) ((Map.([]) (m) (base p))) (offset p)) \/
   (Int.(<=) ((Int.(+) (offset p) (n))) (0))
 
-axiom valid_rw_rd : forall m:Map.map int int. forall p:addr. forall n:int.
+lemma valid_rw_rd : forall m:Map.map int int. forall p:addr. forall n:int.
   valid_rw m p n -> valid_rd m p n
 
-axiom valid_string : forall m:Map.map int int. forall p:addr. (Int.(<) (base
+lemma valid_string : forall m:Map.map int int. forall p:addr. (Int.(<) (base
   p) (0)) -> (Int.(<=) (0) (offset p)) /\ (Int.(<) (offset
   p) ((Map.([]) (m) (base p)))) -> valid_rd m p 1 /\ not valid_rw m p 1
 
-axiom separated_1 : forall p:addr, q:addr. forall a:int, b:int, i:int, j:int
+lemma separated_1 : forall p:addr, q:addr. forall a:int, b:int, i:int, j:int
   [separated p a q b, Mk_addr (base p) i, Mk_addr (base q) j]. separated p a
   q b -> (Int.(<=) (offset p) (i)) /\ (Int.(<) (i) ((Int.(+) (offset
   p) (a)))) -> (Int.(<=) (offset q) (j)) /\ (Int.(<) (j) ((Int.(+) (offset
@@ -104,26 +104,26 @@ predicate sconst (Map.map addr int)
 predicate framed (m:Map.map addr addr) = forall p:addr [(Map.([]) (m) (p))].
   (Int.(<=) (region (base (Map.([]) (m) (p)))) (0))
 
-axiom separated_included : forall p:addr, q:addr. forall a:int, b:int
+lemma separated_included : forall p:addr, q:addr. forall a:int, b:int
   [separated p a q b, included p a q b]. (Int.(>) (a) (0)) ->
   (Int.(>) (b) (0)) -> separated p a q b -> included p a q b -> false
 
-axiom included_trans : forall p:addr, q:addr, r:addr. forall a:int, b:int, c:
+lemma included_trans : forall p:addr, q:addr, r:addr. forall a:int, b:int, c:
   int [included p a q b, included q b r c]. included p a q b -> included q b
   r c -> included p a r c
 
-axiom separated_trans : forall p:addr, q:addr, r:addr. forall a:int, b:int,
+lemma separated_trans : forall p:addr, q:addr, r:addr. forall a:int, b:int,
   c:int [included p a q b, separated q b r c]. included p a q b -> separated
   q b r c -> separated p a r c
 
-axiom separated_sym : forall p:addr, q:addr. forall a:int, b:int [separated p
+lemma separated_sym : forall p:addr, q:addr. forall a:int, b:int [separated p
   a q b]. separated p a q b <-> separated q b p a
 
-axiom eqmem_included : forall m1:Map.map addr 'a, m2:Map.map addr 'a.
+lemma eqmem_included : forall m1:Map.map addr 'a, m2:Map.map addr 'a.
   forall p:addr, q:addr. forall a:int, b:int [eqmem m1 m2 p a, eqmem m1 m2 q
   b]. included p a q b -> eqmem m1 m2 q b -> eqmem m1 m2 p a
 
-axiom eqmem_sym : forall m1:Map.map addr 'a, m2:Map.map addr 'a. forall p:
+lemma eqmem_sym : forall m1:Map.map addr 'a, m2:Map.map addr 'a. forall p:
   addr. forall a:int. eqmem m1 m2 p a -> eqmem m2 m1 p a
 
 axiom havoc_access : forall m0:Map.map addr 'a, m1:Map.map addr 'a. forall q:
