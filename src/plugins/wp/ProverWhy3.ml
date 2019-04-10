@@ -133,21 +133,21 @@ class visitor fmt c =
     method add_import ?was thy =
       self#lines ;
       match was with
-      | None     -> Format.fprintf fmt "use import %s@\n" thy
-      | Some was -> Format.fprintf fmt "use import %s as %s@\n" thy was
+      | None     -> Format.fprintf fmt "use %s@\n" thy
+      | Some was -> Format.fprintf fmt "use %s as %s@\n" thy was
 
     method add_import2 file thy =
       self#lines ;
-      Format.fprintf fmt "use import %s.%s@\n" file thy
+      Format.fprintf fmt "use %s.%s@\n" file thy
 
     method add_import3 file thy name =
       self#lines ;
-      Format.fprintf fmt "use import %s.%s as %s@\n" file thy name
+      Format.fprintf fmt "use %s.%s as %s@\n" file thy name
 
     method on_cluster c =
       self#lines ;
       let name = (cluster_id c) in
-      Format.fprintf fmt "use import %s.%s@\n"
+      Format.fprintf fmt "use %s.%s@\n"
         name (Transitioning.String.capitalize_ascii name) ;
       deps <- (D_cluster c) :: deps
 
@@ -348,9 +348,9 @@ let assemble_goal ~id ~title ~theory ?axioms prop fmt =
     engine#set_goal true ;
     engine#global
       begin fun () ->
-        v#printf "@[<hv 2>goal %s \"expl:%s\":@ %a@]@\n@\n"
+        v#printf "@[<hv 2>goal %s [@expl:%s]:@ %a@]@\n@\n"
           why3_goal_name
-          title
+          (Str.global_replace (Str.regexp "[\n]") "" title)
           engine#pp_prop (F.e_prop prop) ;
       end ;
     engine#set_goal false ;
@@ -469,7 +469,7 @@ let assemble_goal wpo =
 
 open ProverTask
 
-let p_goal = p_until_space ^ " " ^ p_until_space ^ " " ^ p_until_space ^ " : "
+let p_goal = p_until_space ^ " " ^ p_until_space ^ " " ^ p_until_space ^ ": "
 let p_valid = p_goal ^ "Valid (" ^ p_float ^ "s\\(,[^)]*\\)?)"
 let p_limit = p_goal ^ "Timeout"
 let p_error = "File " ^ p_string ^ ", line " ^ p_int ^ ", characters "
@@ -648,7 +648,7 @@ let parse spec =
   with Not_found ->
     { dp_prover = spec ; dp_name = spec ; dp_version = "default" }
 
-let pe_prover = Str.regexp "\\([^ ]+\\) (\\([^)]+\\))"
+let pe_prover = Str.regexp "\\([^ ]+\\) \\([a-zA-Z0-9\\.]+\\)"
 
 class why3detect job =
   object(why)

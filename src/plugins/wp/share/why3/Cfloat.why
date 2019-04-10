@@ -62,12 +62,12 @@ function classify_float real : float_kind
 
 predicate is_finite32 (x:real) = ((classify_float x) = (Float32))
 
-predicate is_finite64 (x:real) = ("asym_split" ((classify_float
+predicate is_finite64 (x:real) = ([@asym_split] ((classify_float
   x) = (Float32))) || ((classify_float x) = (Float64))
 
 predicate is_NaN (x:real) = ((classify_float x) = (NaN))
 
-predicate is_infinite (x:real) = ("asym_split" ((classify_float
+predicate is_infinite (x:real) = ([@asym_split] ((classify_float
   x) = (Inf_pos))) || ((classify_float x) = (Inf_neg))
 
 predicate is_positive_infinite (x:real) = ((classify_float x) = (Inf_pos))
