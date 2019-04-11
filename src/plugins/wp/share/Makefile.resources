@@ -61,6 +61,10 @@ COQ_LIBS_CEA:=	\
  Vlist.v	\
  Zbits.v
 
+## Used in share/why3 only:
+COQ_LIBS_CEAWHY3:= \
+	MapExt.v
+
 ## Used in share/coqwp only
 COQ_LIBS_INRIA:=\
  BuiltIn.v 	\
@@ -130,6 +134,7 @@ ERGO_LIBS_INRIA:= \
 WP_SHARE_SRC_CEA_RESOURCES:= \
 	wp.driver \
 	why3/coq.drv \
+	$(addprefix why3/,  $(COQ_LIBS_CEAWHY3)) \
 	$(addprefix why3/,  $(WHY3_LIBS_CEA)) \
 	$(addprefix why3/,  $(COQ_LIBS_CEA)) \
 	$(addprefix coqwp/, $(COQ_LIBS_CEA)) \

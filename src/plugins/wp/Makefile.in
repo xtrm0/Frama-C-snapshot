@@ -222,7 +222,7 @@ clean::
 ## All relative to share/
 
 WP_COQ_SOURCES= $(addprefix coqwp/, $(COQ_LIBS_CEA) $(COQ_LIBS_INRIA))
-WHY3_COQ_SOURCES= $(addprefix why3/, $(COQ_LIBS_CEA))
+WHY3_COQ_SOURCES= $(addprefix why3/, $(COQ_LIBS_CEA) $(COQ_LIBS_CEAWHY3))
 
 ALL_COQ_SOURCES= $(WP_COQ_SOURCES) $(WHY3_COQ_SOURCES)
 ALL_COQ_BINARIES= $(addsuffix o, $(ALL_COQ_SOURCES))

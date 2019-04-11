@@ -26,6 +26,7 @@ Require Import Reals.
 
 Require BuiltIn.
 Require map.Map.
+Require MapExt.
 
 Require Import Coq.Program.Tactics.
 
@@ -215,36 +216,9 @@ Hypothesis extensionality: forall (A B : Type) (f g : A -> B),
   (forall x, f x = g x) -> f = g.
 
 
-(* Why3 goal *)
-Definition Map_get: forall {a:Type} {a_WT:BuiltIn.WhyType a} {b:Type} {b_WT:BuiltIn.WhyType b},
-  (@Map.map a b) -> a -> b.
-intros a a_WT b b_WT m x.
-exact (m x).
-Defined.
-
-Lemma Map_Select_eq : forall {a:Type} {a_WT:BuiltIn.WhyType a} {b:Type} {b_WT:BuiltIn.WhyType b},
-  forall (m:(Map.map a b)), forall (a1:a) (a2:a), forall (b1:b), (a1 = a2) ->
-  ((Map_get (Map.set m a1 b1) a2) = b1).
-Proof.
-intros a a_WT b b_WT m a1 a2 b1 h1.
-unfold Map_get, Map.set.
-now case BuiltIn.why_decidable_eq.
-Qed.
-
-(* Why3 goal *)
-Lemma Map_Select_neq : forall {a:Type} {a_WT:BuiltIn.WhyType a}
-  {b:Type} {b_WT:BuiltIn.WhyType b}, forall (m:(Map.map a b)), forall (a1:a) (a2:a),
-  forall (b1:b), (~ (a1 = a2)) -> ((Map_get (Map.set m a1 b1) a2) = (Map_get m a2)).
-Proof.
-intros a a_WT b b_WT m a1 a2 b1 h1.
-unfold Map_get, Map.set.
-now case BuiltIn.why_decidable_eq.
-Qed.
-
-
 
 Definition select {A B : Type}
-  (m : farray A B) (k : A) : B := @Map_get A (whytype1 m) B (whytype2 m) m k.
+  (m : farray A B) (k : A) : B := @MapExt.get A (whytype1 m) B (whytype2 m) m k.
 
 Lemma farray_eq : forall A B (m1 m2 : farray A B),
    whytype1 m1 = whytype1 m2 -> whytype2 m1 = whytype2 m2 ->
@@ -272,7 +246,7 @@ Lemma access_update :
   m.[k <- v].[k] = v.
 Proof.
   intros.
-  apply Map_Select_eq.
+  apply MapExt.Select_eq.
   reflexivity.
 Qed.
 
@@ -283,7 +257,7 @@ Lemma access_update_neq :
   i <> j -> m.[ i <- v ].[j] = m.[j].
 Proof.
   intros.
-  apply Map_Select_neq.
+  apply MapExt.Select_neq.
   assumption.
 Qed.
 

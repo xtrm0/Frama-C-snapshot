@@ -43,7 +43,7 @@ ifeq ($(WP_WHY3COQC_ENABLED),yes)
 byte:: why3compile
 opt:: why3compile
 
-why3compile: $(addprefix $(WPLSHARE)/why3/, $(addsuffix o, $(COQ_LIBS_CEA)))
+why3compile: $(addprefix $(WPLSHARE)/why3/, $(addsuffix o, $(COQ_LIBS_CEA) $(COQ_LIBS_CEAWHY3)))
 
 WHY3LIB:=$(shell why3 --print-libdir)
 WHY3INCLUDES= -R $(WHY3LIB)/coq Why3 -R $(WPLSHARE)/why3 ''
