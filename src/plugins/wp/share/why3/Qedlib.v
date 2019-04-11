@@ -27,6 +27,9 @@ Require Import Reals.
 Require BuiltIn.
 Require map.Map.
 
+Require Import Coq.Program.Tactics.
+
+
 Open Scope Z_scope.
 
 Set Implicit Arguments.
@@ -206,13 +209,42 @@ Definition real_hex := real_base 2%R.
 
 Record farray (A B : Type) := { whytype1 : BuiltIn.WhyType A ;
                                whytype2 : BuiltIn.WhyType B ;
-                               access :> @Map.map A B }.
+                               access :> A -> B }.
 Definition array (A : Type) := farray Z A.
 Hypothesis extensionality: forall (A B : Type) (f g : A -> B),
   (forall x, f x = g x) -> f = g.
 
+
+(* Why3 goal *)
+Definition Map_get: forall {a:Type} {a_WT:BuiltIn.WhyType a} {b:Type} {b_WT:BuiltIn.WhyType b},
+  (@Map.map a b) -> a -> b.
+intros a a_WT b b_WT m x.
+exact (m x).
+Defined.
+
+Lemma Map_Select_eq : forall {a:Type} {a_WT:BuiltIn.WhyType a} {b:Type} {b_WT:BuiltIn.WhyType b},
+  forall (m:(Map.map a b)), forall (a1:a) (a2:a), forall (b1:b), (a1 = a2) ->
+  ((Map_get (Map.set m a1 b1) a2) = b1).
+Proof.
+intros a a_WT b b_WT m a1 a2 b1 h1.
+unfold Map_get, Map.set.
+now case BuiltIn.why_decidable_eq.
+Qed.
+
+(* Why3 goal *)
+Lemma Map_Select_neq : forall {a:Type} {a_WT:BuiltIn.WhyType a}
+  {b:Type} {b_WT:BuiltIn.WhyType b}, forall (m:(Map.map a b)), forall (a1:a) (a2:a),
+  forall (b1:b), (~ (a1 = a2)) -> ((Map_get (Map.set m a1 b1) a2) = (Map_get m a2)).
+Proof.
+intros a a_WT b b_WT m a1 a2 b1 h1.
+unfold Map_get, Map.set.
+now case BuiltIn.why_decidable_eq.
+Qed.
+
+
+
 Definition select {A B : Type}
-  (m : farray A B) (k : A) : B := @Map.get A (whytype1 m) B (whytype2 m) m k.
+  (m : farray A B) (k : A) : B := @Map_get A (whytype1 m) B (whytype2 m) m k.
 
 Lemma farray_eq : forall A B (m1 m2 : farray A B),
    whytype1 m1 = whytype1 m2 -> whytype2 m1 = whytype2 m2 ->
@@ -220,10 +252,9 @@ Lemma farray_eq : forall A B (m1 m2 : farray A B),
 Proof.
   intros A B m1 m2.
   destruct m1. destruct m2. simpl.
-  intros H1 H2; rewrite H1; rewrite H2 ; clear H1 H2.
-  destruct access0. destruct access1. compute.
-  intro K.
-  rewrite (extensionality b b0 K).
+  intros H1 H2; rewrite H1; rewrite H2; clear H1 H2.
+  intuition.
+  rewrite (extensionality access0 access1 H).
   reflexivity.
 Qed.
 
@@ -234,21 +265,25 @@ Definition update {A B : Type}
 Notation " a .[ k ] " := (select a k) (at level 60).
 Notation " a .[ k <- v ] " := (update a k v) (at level 60).
 
+
+
 Lemma access_update :
   forall (A B : Type) (m : farray A B) k v,
   m.[k <- v].[k] = v.
 Proof.
   intros.
-  apply Map.Select_eq.
+  apply Map_Select_eq.
   reflexivity.
 Qed.
+
+
 
 Lemma access_update_neq :
   forall (A B : Type) (m : farray A B) i j v,
   i <> j -> m.[ i <- v ].[j] = m.[j].
 Proof.
   intros.
-  apply Map.Select_neq.
+  apply Map_Select_neq.
   assumption.
 Qed.
 
